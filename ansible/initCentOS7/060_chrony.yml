@@ -1,0 +1,43 @@
+---
+
+- hosts: servers_FQDN
+  remote_user: root
+
+  tasks:
+  - name: Install chrony package
+    yum: pkg=chrony state=installed disable_gpg_check=yes
+    notify:
+      - remove all server lines in chrony.conf
+      - add ntp server lines in chrony.conf
+      - enable and restart chronyd service
+
+  - name: verify ntp server set as vars
+    shell: "cat /etc/chrony.conf | grep {{ item }}"
+    with_items: "{{ ntpserver }}"
+    register: ntp_set_correct
+    ignore_errors: true
+
+  - name: correct ntp setting
+    shell: echo "need correct ntp settings"
+    when: ntp_set_correct|failed
+    notify:
+      - remove all server lines in chrony.conf
+      - add ntp server lines in chrony.conf
+      - enable and restart chronyd service
+
+  - name: set timdatectl enable ntp
+    shell: "timedatectl set-ntp 1"
+
+  handlers:
+  - name: remove all server lines in chrony.conf
+    replace:
+      path: /etc/chrony.conf
+      regexp: '(\s+)server(\s+.*)$'
+  - name: add ntp server lines in chrony.conf
+    lineinfile:
+      path: /etc/chrony.conf
+      line: "server {{ item }}"
+      state: present
+    with_items: "{{ ntpserver }}"
+  - name: enable and restart chronyd service
+    systemd: name=chronyd state=restarted daemon_reload=yes enabled=yes

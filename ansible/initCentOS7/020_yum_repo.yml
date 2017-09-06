@@ -1,0 +1,55 @@
+---
+
+- hosts: servers_IP
+  remote_user: root
+
+# Task setup local repositories
+  tasks:
+  - name: Remove repository (and clean up left-over metadata)
+    yum_repository:
+      name: packages
+      state: absent
+    notify: yum-clean-metadata
+
+  - name: Add Base repositories into the yumserver repo file
+    yum_repository:
+      name: Yum-Server-Base
+      description: Yum-Server-Base
+      file: yumserver
+      baseurl: "{{ baserepo }}"
+      gpgcheck: no
+  
+  - name: Add Extras repositories into the yumserver repo file
+    yum_repository:
+      name: Yum-Server-Extras
+      description: Yum-Server-Extras
+      file: yumserver
+      baseurl: "{{ extrasrepo }}"
+      gpgcheck: no
+
+  - name: Add Updates repositories into the yumserver repo file
+    yum_repository:
+      name: Yum-Server-Updates
+      description: Yum-Server-Updates
+      file: yumserver
+      baseurl: "{{ updatesrepo }}"
+      gpgcheck: no
+
+  - name: Add epel repository
+    yum_repository:
+      name: epel
+      description: EPEL YUM repo
+      # remove proxy setting if not need
+      proxy: "http://{{ proxyserver }}:{{ proxyport }}"
+      #baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+      baseurl: http://mirrors.aliyun.com/epel/7/$basearch
+      #baseurl: http://mirrors.aliyuncs.com/epel/7/$basearch
+      #metalink: https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch
+      failovermethod: priority
+
+# Handler clean yum metadata cache
+  handlers:
+  - name: yum-clean-metadata
+    command: yum clean metadata
+    args:
+      warn: no

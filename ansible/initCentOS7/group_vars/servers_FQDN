@@ -1,0 +1,26 @@
+---
+
+proxyserver: 10.10.10.10
+proxyport: 3128
+baserepo: http://reposerver.dxc.local/repos/CentOS7/base7
+extrasrepo: http://reposerver.dxc.local/repos/CentOS7/extras7
+updatesrepo: http://reposerver.dxc.local/repos/CentOS7/updates7
+resolv_nameservers:
+  - 10.10.20.10
+  - 10.10.20.11
+resolv_domain: dxc.local
+resolv_search:
+  - dxc.local
+  - dxc.com
+resolv_options:
+  - timeout:2
+  - rotate
+domainname: dxc.local
+computerou: "OU=Computers,OU=Servers,DC=dxc,DC=local"
+
+sudoers:
+  - "%dxcAdmins ALL=(ALL) ALL"
+  - "ade ALL=(ALL) NOPASSWD: ALL"
+ntpserver:
+  - 10.10.20.10
+  - ntp.dxc.local

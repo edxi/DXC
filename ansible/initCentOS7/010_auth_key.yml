@@ -1,0 +1,21 @@
+---
+
+- hosts: servers_IP
+  remote_user: root
+
+  vars_prompt:
+    - name: "ansible_user"
+      prompt: "Enter remote User Name"
+      private: no
+    - name: "ansible_password"
+      prompt: "Enter remote User Password"
+      private: yes
+
+
+  tasks:
+  - name: Set authorized key took from file
+    authorized_key:
+      user: root
+      state: present
+      key: "{{ lookup('file', '/root/.ssh/id_rsa.pub') }}"
+
