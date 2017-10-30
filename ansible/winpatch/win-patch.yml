@@ -1,0 +1,7 @@
+---
+- hosts: windows_prod
+  tasks:
+    - win_updates:
+      register: update_result
+    - win_reboot:
+      when: update_result.reboot_required

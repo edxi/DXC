@@ -1,0 +1,13 @@
+---
+
+- hosts: stgservers
+  remote_user: root
+
+  tasks:
+   - name: start cma
+     service: name=cma state=started
+
+   - name: restart nails
+     command: service nails restart
+     tags: status
+

@@ -1,0 +1,20 @@
+---
+
+- hosts: stgservers
+  remote_user: root
+
+  tasks:
+   - name: Transfer installrpm.sh
+     copy: src="/ansible/antivirus/agent/installrpm.sh" dest="/tmp/installrpm.sh" mode=755
+
+   - name: Transfer installdeb.sh
+     copy: src="/ansible/antivirus/agent/installdeb.sh" dest="/tmp/installdeb.sh" mode=755
+
+   - name: Transfer install.sh
+     copy: src="/ansible/antivirus/agent/install.sh" dest="/tmp/install.sh" mode=755
+
+   - name: install agent and runtime
+     shell: /tmp/install.sh -i
+     ignore_errors: true
+
+

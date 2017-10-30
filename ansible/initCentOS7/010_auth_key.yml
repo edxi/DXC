@@ -1,7 +1,6 @@
 ---
 
-- hosts: servers_IP
-  remote_user: root
+- hosts: ELKstack_servers_IP
 
   vars_prompt:
     - name: "ansible_user"
@@ -13,9 +12,12 @@
 
 
   tasks:
-  - name: Set authorized key took from file
+  - name: check ansible_user
+    fail: msg="ansible_user is not defined"
+    when: ansible_user is not defined or ansible_user == ""
+  - name: add authorized_key
     authorized_key:
-      user: root
+      user: "{{ ansible_user }}"
       state: present
-      key: "{{ lookup('file', '/root/.ssh/id_rsa.pub') }}"
+      key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
 

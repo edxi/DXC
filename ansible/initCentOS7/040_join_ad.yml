@@ -1,7 +1,7 @@
 ---
 
-- hosts: servers_IP
-  remote_user: root
+- hosts: ELKstack_servers_IP
+  sudo: true
 
   vars_prompt:
     - name: "adminuser"
@@ -13,7 +13,7 @@
 
   tasks:
   - name: install software for join AD
-    yum: pkg={{item}} state=installed disable_gpg_check=yes
+    yum: pkg={{item}} state=present disable_gpg_check=yes
     with_items:
       - realmd
       - oddjob
@@ -22,16 +22,17 @@
       - samba-common-tools
       - python-pip
 
-  - name: Check if pexpect installed
-    shell: "pip list | grep pexpect"
-    register: pip_installed
-    changed_when: false
-    ignore_errors: true
-
-  - name: install pexpect using pip
-    # remove proxy parameter if not need
-    shell: "pip --proxy http://{{ proxyserver }}:{{ proxyport }} install pexpect"
-    when: pip_installed|failed
+  - name: install pexpect with proxy
+    pip:
+      name: pexpect
+      state: present
+      extra_args: "--proxy http://{{ proxyserver }}:{{ proxyport }}"
+    when: proxyserver != ''
+  - name: install pexpect without proxy
+    pip:
+      name: pexpect
+      state: present
+    when: proxyserver == ''
 
   - name: Check if joined domain
     shell: "realm list | grep sssd"

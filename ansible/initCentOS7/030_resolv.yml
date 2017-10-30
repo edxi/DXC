@@ -1,7 +1,7 @@
 ---
 
-- hosts: servers_IP
-  remote_user: root
+- hosts: ELKstack_servers_IP
+  sudo: true
 
   tasks:
   - name: Set Network Manager config file

@@ -1,0 +1,10 @@
+---
+
+- hosts: stgservers
+  remote_user: root
+
+  tasks:
+   - name: Transfer test file
+     copy: src="/ansible/antivirus/eicar_com.zip" dest="/tmp/eicar_com.zip" mode=755
+
+

@@ -1,0 +1,28 @@
+---
+
+- hosts: antivirus_servers
+  remote_user: root
+
+  tasks:
+   - name: stop nails
+     command: service nails stop
+     ignore_errors: true
+
+   - name: remove McAfeeVSEForLinux
+     command: rpm -e McAfeeVSEForLinux-1.9.1.29107-29107.noarch
+     ignore_errors: true
+
+   - name: stop agent
+     command: service cma stop
+     ignore_errors: true
+
+   - name: remove agent
+     command: rpm -e MFEcma-4.8.0-1938.i686
+     ignore_errors: true
+
+   - name: remove runtime
+     command: rpm -e MFErt-2.0-1.i686
+     ignore_errors: true
+
+
+
