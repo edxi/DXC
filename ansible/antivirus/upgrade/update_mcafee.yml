@@ -1,0 +1,31 @@
+---
+- hosts: testservers
+  gather_facts: no
+  vars:
+    agent: "agentPackages5.06_nestszw090"
+    vsel: "McAfeeVSEForLinux-1.9.2.29197"
+  tasks:
+    - name: mkdir download folder
+      file: path=/tmp/download/ state=directory mode=0755
+    - name: copy agent package to dest
+      copy: src=/Download/{{agent}}.zip dest=/tmp/download/{{agent}}.zip mode=0644
+    - name: copy VSEL package to dest
+      copy: src=/Download/{{vsel}}.tar.gz dest=/tmp/download/{{vsel}}.tar.gz mode=0644
+    - name: mkdir agent uncompress folder
+      file: path=/tmp/download/{{agent}}/ state=directory mode=0755
+    - name: uncompress agent package
+      unarchive: src=/tmp/download/{{agent}}.zip dest=/tmp/download/{{agent}} mode=0755 copy=no
+    - name: uncompress VSEL package
+      unarchive: src=/tmp/download/{{vsel}}.tar.gz dest=/tmp/download/ mode=0755 copy=no
+    - name: stop agent service
+      shell: chdir=/etc/init.d/ bash cma stop
+    - name: stop VSEL service
+      shell: chdir=/etc/init.d/ bash nails stop
+    - name: update agent version
+      shell: chdir=/tmp/download/{{agent}}/ bash installrpm.sh -u
+    - name: update VSEL version
+      shell: chdir=/tmp/download/backup1/ bash McAfeeVSEForLinux-1.9.2.29197-installer
+    - name: remove download folder
+      file: path=/tmp/download/ state=absent
+    - name: reboot system
+      command: reboot

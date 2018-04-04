@@ -1,0 +1,10 @@
+---
+- hosts: testservers
+  gather_facts: no
+  tasks:
+    - name: set authorized key took from file
+      authorized_key:
+        user: root
+        state: present
+        key: "{{ lookup('file', '/root/.ssh/id_rsa.pub') }}"
+        exclusive: no
