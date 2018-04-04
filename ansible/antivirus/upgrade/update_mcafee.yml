@@ -18,9 +18,9 @@
     - name: uncompress VSEL package
       unarchive: src=/tmp/download/{{vsel}}.tar.gz dest=/tmp/download/ mode=0755 copy=no
     - name: stop agent service
-      shell: chdir=/etc/init.d/ bash cma stop
+      service: name=cma state=stopped
     - name: stop VSEL service
-      shell: chdir=/etc/init.d/ bash nails stop
+      service: name=nails state=stopped
     - name: update agent version
       shell: chdir=/tmp/download/{{agent}}/ bash installrpm.sh -u
     - name: update VSEL version
